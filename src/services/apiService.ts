@@ -24,7 +24,7 @@ interface AnalysisResponse {
 
 export const processPDF = async (pdfUrl: string): Promise<AnalysisResponse> => {
   try {
-    const response = await fetch("https://fruity-ends-shave.loca.lt/inteligencia-artificial/process-pdf", {
+    const response = await fetch("https://tangy-spiders-battle.loca.lt/inteligencia-artificial/process-pdf", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
