@@ -5,22 +5,26 @@ import { Upload, File, X, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { uploadToS3 } from "@/services/s3Service";
 
 interface FileUploaderProps {
   accept?: string;
   maxSize?: number;
   onFileSelected: (file: File) => void;
+  onFileUploaded?: (url: string) => void;
 }
 
 const FileUploader = ({ 
   accept = ".pdf", 
   maxSize = 10, // MB
-  onFileSelected 
+  onFileSelected,
+  onFileUploaded
 }: FileUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -64,34 +68,55 @@ const FileUploader = ({
     setFile(file);
     onFileSelected(file);
     
-    // Simulate file processing with a progress bar
-    simulateProcessing();
+    // Iniciar o upload para o S3
+    handleUploadToS3(file);
   };
 
-  const simulateProcessing = () => {
+  const handleUploadToS3 = async (file: File) => {
     setIsUploading(true);
     setUploadProgress(0);
     
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        const newProgress = prev + 5;
-        if (newProgress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsUploading(false);
-            toast.success("Arquivo carregado com sucesso");
-          }, 500);
-          return 100;
-        }
-        return newProgress;
-      });
-    }, 100);
+    try {
+      // Simulação de progresso enquanto faz o upload real
+      const interval = setInterval(() => {
+        setUploadProgress(prev => {
+          const newProgress = prev + 2;
+          if (newProgress >= 95) {
+            clearInterval(interval);
+            return 95; // Mantém em 95% até o upload real terminar
+          }
+          return newProgress;
+        });
+      }, 100);
+      
+      // Upload real para o S3
+      const url = await uploadToS3(file);
+      
+      // Upload concluído
+      clearInterval(interval);
+      setUploadProgress(100);
+      setUploadedUrl(url);
+      setIsUploading(false);
+      
+      toast.success("Arquivo enviado com sucesso");
+      
+      // Notifica o componente pai
+      if (onFileUploaded) {
+        onFileUploaded(url);
+      }
+    } catch (error) {
+      console.error("Erro no upload:", error);
+      toast.error("Erro ao enviar o arquivo. Tente novamente.");
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
   };
 
   const removeFile = () => {
     setFile(null);
     setIsUploading(false);
     setUploadProgress(0);
+    setUploadedUrl(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -176,7 +201,7 @@ const FileUploader = ({
             {isUploading && (
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span>Processando...</span>
+                  <span>Enviando para o servidor...</span>
                   <span>{uploadProgress}%</span>
                 </div>
                 <Progress value={uploadProgress} className="h-1" />

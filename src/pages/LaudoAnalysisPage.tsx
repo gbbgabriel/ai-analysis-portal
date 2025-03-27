@@ -9,10 +9,12 @@ import FileUploader from "@/components/FileUploader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ResultTable from "@/components/ResultTable";
 import { toast } from "sonner";
+import { processPDF, formatAnalysisToResults } from "@/services/apiService";
 
 const LaudoAnalysisPage = () => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<any>(null);
@@ -24,37 +26,39 @@ const LaudoAnalysisPage = () => {
     setAnalysisResults(null);
   };
 
-  const startAnalysis = () => {
-    if (!selectedFile) {
-      toast.error("Por favor, selecione um laudo para análise");
+  const handleFileUploaded = (url: string) => {
+    setFileUrl(url);
+  };
+
+  const startAnalysis = async () => {
+    if (!selectedFile || !fileUrl) {
+      toast.error("Por favor, aguarde o upload do arquivo ser concluído");
       return;
     }
 
     setIsAnalyzing(true);
     
-    // Simulate analysis for demonstration purposes
-    setTimeout(() => {
-      // Mock analysis results based on the sample image
-      const mockResults = {
-        results: [
-          { field: "Placa:", textValue: "DTW8216", imageValue: "DTW8216", match: true },
-          { field: "Chassi:", textValue: "9BD27803A72990408", imageValue: "9BD27803A72990408", match: true },
-          { field: "Motor:", textValue: "178F3011015805B", imageValue: "178F3011015805B", match: true },
-          { field: "Marca/Modelo:", textValue: "STRADA FIRE FLEX", imageValue: "STRADA FIRE FLEX", match: true },
-          { field: "Cor:", textValue: "PRETA", imageValue: "PRETA", match: true },
-        ],
-        observations: "Observação I.A.: Motor reprovado por divergência com dados da BIN (Base de Índice Nacional). Cor do veículo divergente no CRLV conforme apontamentos."
-      };
+    try {
+      // Chamar a API para análise
+      const analysisResponse = await processPDF(fileUrl);
       
-      setAnalysisResults(mockResults);
+      // Formatar os resultados para exibição
+      const formattedResults = formatAnalysisToResults(analysisResponse);
+      
+      setAnalysisResults(formattedResults);
       setIsAnalyzing(false);
       setAnalysisComplete(true);
       toast.success("Análise concluída com sucesso");
-    }, 5000);
+    } catch (error) {
+      console.error("Erro na análise:", error);
+      toast.error("Erro ao analisar o laudo. Por favor, tente novamente.");
+      setIsAnalyzing(false);
+    }
   };
 
   const resetAnalysis = () => {
     setSelectedFile(null);
+    setFileUrl(null);
     setAnalysisComplete(false);
     setAnalysisResults(null);
   };
@@ -102,9 +106,12 @@ const LaudoAnalysisPage = () => {
                 transition={{ duration: 0.5 }}
                 className="space-y-8"
               >
-                <FileUploader onFileSelected={handleFileSelected} />
+                <FileUploader 
+                  onFileSelected={handleFileSelected} 
+                  onFileUploaded={handleFileUploaded}
+                />
                 
-                {selectedFile && !isAnalyzing && (
+                {selectedFile && fileUrl && !isAnalyzing && (
                   <div className="flex justify-center">
                     <Button 
                       onClick={startAnalysis}
