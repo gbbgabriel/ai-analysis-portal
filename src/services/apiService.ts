@@ -44,6 +44,20 @@ export const processPDF = async (pdfUrl: string): Promise<AnalysisResponse> => {
 };
 
 export const formatAnalysisToResults = (analysis: AnalysisResponse) => {
+  // Format date if it exists
+  let formattedDate = "";
+  try {
+    if (analysis.data_laudo) {
+      formattedDate = new Date(analysis.data_laudo).toLocaleDateString('pt-BR');
+    }
+  } catch (error) {
+    console.error("Erro ao formatar data:", error);
+    formattedDate = analysis.data_laudo || "";
+  }
+  
+  // Create status info string
+  const statusInfo = `Status do Laudo: ${analysis.status_laudo}. Proprietário: ${analysis.nome_proprietario}, ${analysis.municipio_proprietario}/${analysis.uf_proprietario}. Data: ${formattedDate}.`;
+  
   return {
     results: [
       { 
@@ -83,7 +97,8 @@ export const formatAnalysisToResults = (analysis: AnalysisResponse) => {
         match: analysis.cor_veiculo === analysis.cor_veiculo_imagem_laudo 
       },
     ],
-    observations: analysis.observacoes_ia || `Status do Laudo: ${analysis.status_laudo}. Proprietário: ${analysis.nome_proprietario}, ${analysis.municipio_proprietario}/${analysis.uf_proprietario}. Data: ${new Date(analysis.data_laudo).toLocaleDateString('pt-BR')}.`,
+    observations: analysis.observacoes_ia || "",
+    statusInfo: statusInfo,
     extra: {
       categoria: analysis.categoria_veiculo,
       status: analysis.status_laudo
