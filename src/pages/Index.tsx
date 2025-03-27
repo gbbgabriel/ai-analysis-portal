@@ -86,7 +86,7 @@ const Index = () => {
       <footer className="py-6 border-t">
         <div className="container px-4 md:px-6">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Portal de Análise IA. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} AI SE7I. Todos os direitos reservados.
           </p>
         </div>
       </footer>
