@@ -49,8 +49,8 @@ const Index = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            Portal de Análise
-            <span className="text-accent"> Inteligente</span>
+            Análise Inteligente
+            <span className="text-accent"> SE7I </span>
           </motion.h1>
           
           <motion.p 
@@ -59,8 +59,8 @@ const Index = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Utilize o poder da inteligência artificial para analisar documentos 
-            e obter insights precisos e automatizados.
+            Utilize o poder da inteligência artificial para analisar laudos 
+            e obter dados precisos e automatizados.
           </motion.p>
         </motion.div>
 

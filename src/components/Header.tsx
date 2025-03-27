@@ -36,9 +36,9 @@ const Header = () => {
         <Link to="/" className="text-sm font-medium hover:text-accent transition-colors">
           Início
         </Link>
-        <Link to="/sobre" className="text-sm font-medium hover:text-accent transition-colors">
+        {/* <Link to="/sobre" className="text-sm font-medium hover:text-accent transition-colors">
           Sobre
-        </Link>
+        </Link> */}
       </nav>
     </motion.header>;
 };
