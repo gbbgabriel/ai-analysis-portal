@@ -10,6 +10,7 @@ const s3Client = new S3Client({
     accessKeyId: "DO00324C4WRMEKMRGL9C",
     secretAccessKey: "wAujCwGwGSdPDoChy0BauKUpDWdoxwUqsv+VVwAt35k",
   },
+  forcePathStyle: false // Importante para o Digital Ocean Spaces
 });
 
 export const uploadToS3 = async (file: File): Promise<string> => {
@@ -27,7 +28,7 @@ export const uploadToS3 = async (file: File): Promise<string> => {
         Key: fileName,
         Body: file,
         ContentType: "application/pdf",
-        ACL: "public-read",
+        ACL: "public-read", // Garante que o arquivo seja acessível publicamente
       },
     });
 
