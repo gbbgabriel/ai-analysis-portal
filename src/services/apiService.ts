@@ -5,10 +5,13 @@ interface AnalysisResponse {
   numero_laudo: string;
   placa: string;
   placa_veiculo_imagem_do_pdf: string;
+  porcentagem_placa_veiculo_imagem_do_pdf: number;
   chassi: string;
   chassi_imagem_laudo: string;
+  porcentagem_chassi_imagem_laudo: number;
   motor: string;
   motor_imagem_laudo: string;
+  porcentagem_motor_imagem_laudo: number;
   marca_modelo: string;
   marca_modelo_imagem_laudo: string;
   categoria_veiculo: string;
@@ -56,19 +59,22 @@ export const formatAnalysisToResults = (analysis: AnalysisResponse) => {
         field: "Placa:", 
         textValue: analysis.placa, 
         imageValue: analysis.placa_veiculo_imagem_do_pdf, 
-        match: analysis.placa === analysis.placa_veiculo_imagem_do_pdf 
+        match: analysis.placa === analysis.placa_veiculo_imagem_do_pdf,
+        percentage: analysis.porcentagem_placa_veiculo_imagem_do_pdf
       },
       { 
         field: "Chassi:", 
         textValue: analysis.chassi, 
         imageValue: analysis.chassi_imagem_laudo, 
-        match: analysis.chassi === analysis.chassi_imagem_laudo 
+        match: analysis.chassi === analysis.chassi_imagem_laudo,
+        percentage: analysis.porcentagem_chassi_imagem_laudo
       },
       { 
         field: "Motor:", 
         textValue: analysis.motor, 
         imageValue: analysis.motor_imagem_laudo, 
-        match: analysis.motor === analysis.motor_imagem_laudo 
+        match: analysis.motor === analysis.motor_imagem_laudo,
+        percentage: analysis.porcentagem_motor_imagem_laudo
       },
       { 
         field: "Marca/Modelo:", 

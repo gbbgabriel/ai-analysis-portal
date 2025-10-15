@@ -1,12 +1,14 @@
 
-import { Check, AlertCircle } from "lucide-react";
+import { Check, AlertCircle, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 interface ResultItem {
   field: string;
   textValue: string;
   imageValue: string;
   match: boolean;
+  percentage?: number;
 }
 
 interface ResultTableProps {
@@ -49,6 +51,7 @@ const ResultTable = ({ results, observations }: ResultTableProps) => {
               <th className="py-3 px-4 text-left text-sm font-medium">Dados</th>
               <th className="py-3 px-4 text-left text-sm font-medium">IA (Texto)</th>
               <th className="py-3 px-4 text-left text-sm font-medium">IA (Imagem)</th>
+              <th className="py-3 px-4 text-center text-sm font-medium">Visibilidade</th>
               <th className="py-3 px-4 text-center text-sm font-medium">Comparativo</th>
             </tr>
           </thead>
@@ -62,6 +65,19 @@ const ResultTable = ({ results, observations }: ResultTableProps) => {
                 <td className="py-3 px-4 text-sm border-t">{result.field}</td>
                 <td className="py-3 px-4 text-sm border-t">{result.textValue}</td>
                 <td className="py-3 px-4 text-sm border-t">{result.imageValue}</td>
+                <td className="py-3 px-4 text-center border-t">
+                  {result.percentage !== undefined ? (
+                    <Badge 
+                      variant={result.percentage >= 80 ? "default" : result.percentage >= 60 ? "secondary" : "destructive"}
+                      className="gap-1"
+                    >
+                      <Eye className="h-3 w-3" />
+                      {result.percentage}%
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">N/A</span>
+                  )}
+                </td>
                 <td className="py-3 px-4 text-center border-t">
                   {result.match ? (
                     <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
