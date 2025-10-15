@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ArrowLeft, Play } from "lucide-react";
@@ -21,7 +20,6 @@ const LaudoAnalysisPage = () => {
 
   const handleFileSelected = (file: File) => {
     setSelectedFile(file);
-    // Reset analysis state when a new file is selected
     setAnalysisComplete(false);
     setAnalysisResults(null);
   };
@@ -39,10 +37,8 @@ const LaudoAnalysisPage = () => {
     setIsAnalyzing(true);
     
     try {
-      // Chamar a API para análise
       const analysisResponse = await processPDF(fileUrl);
       
-      // Formatar os resultados para exibição
       const formattedResults = formatAnalysisToResults(analysisResponse);
       
       setAnalysisResults(formattedResults);
@@ -159,6 +155,7 @@ const LaudoAnalysisPage = () => {
                     <ResultTable 
                       results={analysisResults.results} 
                       observations={analysisResults.observations}
+                      statusInfo={analysisResults.statusInfo}
                     />
                   )}
                 </div>

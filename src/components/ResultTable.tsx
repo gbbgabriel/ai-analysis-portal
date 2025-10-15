@@ -14,9 +14,10 @@ interface ResultItem {
 interface ResultTableProps {
   results: ResultItem[];
   observations?: string;
+  statusInfo?: string;
 }
 
-const ResultTable = ({ results, observations }: ResultTableProps) => {
+const ResultTable = ({ results, observations, statusInfo }: ResultTableProps) => {
   const tableVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -39,6 +40,17 @@ const ResultTable = ({ results, observations }: ResultTableProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
+      {statusInfo && (
+        <motion.div 
+          className="p-4 bg-muted/30 border-b text-sm"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <p className="font-medium text-foreground">{statusInfo}</p>
+        </motion.div>
+      )}
+      
       <motion.div 
         className="overflow-x-auto"
         variants={tableVariants}
