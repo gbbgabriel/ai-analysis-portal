@@ -7,8 +7,25 @@ import Header from "@/components/Header";
 import FileUploader from "@/components/FileUploader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ResultTable from "@/components/ResultTable";
+import PDFViewer from "@/components/PDFViewer";
 import { toast } from "sonner";
 import { processPDF, formatAnalysisToResults } from "@/services/apiService";
+
+interface AnalysisResults {
+  results: Array<{
+    field: string;
+    textValue: string;
+    imageValue: string;
+    match: boolean;
+    percentage?: number;
+  }>;
+  observations: string;
+  statusInfo: string;
+  extra: {
+    categoria: string;
+    status: string;
+  };
+}
 
 const LaudoAnalysisPage = () => {
   const navigate = useNavigate();
@@ -16,7 +33,7 @@ const LaudoAnalysisPage = () => {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState<any>(null);
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
 
   const handleFileSelected = (file: File) => {
     setSelectedFile(file);
@@ -159,6 +176,12 @@ const LaudoAnalysisPage = () => {
                     />
                   )}
                 </div>
+
+                {fileUrl && (
+                  <div>
+                    <PDFViewer fileUrl={fileUrl} />
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
